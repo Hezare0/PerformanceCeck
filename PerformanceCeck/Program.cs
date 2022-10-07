@@ -1,5 +1,6 @@
 ﻿using PerformanceCeck;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.Metrics;
@@ -11,16 +12,17 @@ namespace Performance_check
 {
     internal class Program
     {
-        static int counter;  
-        static int n;
+
         static void Main(string[] args)
         {
+            Hashtable hashtable = new Hashtable(10000);
             Random random = new Random();
             Stopwatch stopwatch = new Stopwatch();
             Timing timing = new Timing();
-            int[] mass = new int[100];
+            int[] mass = new int[10000];
             for(int i = 0; i < mass.Length; i++)
             {
+                hashtable.Add(i, random.Next(10000));
                 mass[i] = random.Next(10000);
             }
             bubleSort(mass, stopwatch, timing);
@@ -130,14 +132,14 @@ namespace Performance_check
             int L = 0;        // левая граница
             int R = mass.Length - 1;    // правая граница
             k = (R + L) / 2;
-            counter = 0;
+
             while (L < R - 1)
             {
-                counter++;
+
                 k = (R + L) / 2;
                 if (mass[k] == find)
                     return k;
-                counter++;
+
                 if (mass[k] < find)
                     L = k;
                 else
