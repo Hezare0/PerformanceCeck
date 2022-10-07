@@ -37,6 +37,11 @@ namespace PerformanceCeck
                     duration = tmp;
             }
         }
+
+        public void reset()
+        {
+            duration = new TimeSpan(0);
+        }
         public TimeSpan Result()
         {
             return duration;

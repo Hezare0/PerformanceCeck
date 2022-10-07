@@ -1,41 +1,117 @@
 ﻿using PerformanceCeck;
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.Metrics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Performance_check
 {
     internal class Program
     {
-
         static void Main(string[] args)
         {
             Hashtable hashtable = new Hashtable(10000);
-            Random random = new Random();
+            
             Stopwatch stopwatch = new Stopwatch();
             Timing timing = new Timing();
             int[] mass = new int[10000];
-            for(int i = 0; i < mass.Length; i++)
+
+            Random random = new Random();
+            for (int i = 0; i < hashtable.Count; i++)
             {
                 hashtable.Add(i, random.Next(10000));
-                mass[i] = random.Next(10000);
             }
-            bubleSort(mass, stopwatch, timing);
-            sortingByChoice(mass, stopwatch, timing);
-            sortingByInsert(mass, stopwatch, timing);
-            linePoisk(mass, 7532, stopwatch, timing);
-            binPoisk(mass, 7532, stopwatch, timing);
-            
-        }
-        //сортировка обменом
-        public static void bubleSort(int[] mass, Stopwatch stopwatch, Timing timing)
-        {
+
+            //сортировка обменом
+            //Stopwatch test: 11413123 ms
+            //Timing test: 00:00:00.6562500
+            fillArray(mass);
             timing.StartTime();
+            bubleSort(mass, stopwatch);
+            timing.StopTime();
+            Console.WriteLine("Timing: " + timing.Result().ToString());
+
+            //сортировка выбором
+            //Stopwatch test: 3994279 ms
+            //Timing test: 00:00:00.3593750
+            fillArray(mass);
+            timing.reset();
+            timing.StartTime();
+            sortingByChoice(mass, stopwatch);
+            timing.StopTime();
+            Console.WriteLine("Timing: " + timing.Result().ToString());
+
+            //Сортировка вставками
+            //Stopwatch test: 3773448 ms
+            //Timing test: 00:00:00.3281250
+            fillArray(mass);
+            timing.reset();
+            timing.StartTime();
+            sortingByInsert(mass, stopwatch);
+            timing.StopTime();
+            Console.WriteLine("Timing: " + timing.Result().ToString());
+
+            //Линейный поиск
+            //Stopwatch test: 525 ms
+            //Timing test:  00:00:00
+            fillArray(mass);
+            timing.reset();
+            timing.StartTime();
+            linePoisk(mass, 7532, stopwatch);
+            timing.StopTime();
+            Console.WriteLine("Timing: " + timing.Result().ToString());
+
+            // Бинарный поиск
+            //Stopwatch test: 18 ms
+            //Timing test:  00:00:00
+            fillArray(mass);
+            timing.reset();
+            timing.StartTime();
+            binPoisk(mass, 7532, stopwatch);
+            timing.StopTime();
+            Console.WriteLine("Timing: " + timing.Result().ToString());
+
+            // поиск в Hashtable
+            //Stopwatch test: 8606 ms
+            //Timing test:  00:00:00.0156250
+            timing.reset();
+            timing.StartTime();
+            stopwatch.Restart();
+            findElement(hashtable, 2);
+            stopwatch.Stop();
+            timing.StopTime();
+            Console.WriteLine("Stopwatch: " + stopwatch.ElapsedTicks.ToString());
+            Console.WriteLine("Timing: " + timing.Result().ToString());
+
+        }
+
+        //Заполнение массива
+        public static void fillArray(int[] array)
+        {
+            Random random = new Random();
+            for (int i = 0; i < array.Length; i++)
+            {
+                array[i] = random.Next(10000);
+            }
+           
+        }
+
+        // поиск в Hashtable
+        public static int findElement(Hashtable hashtable, int element)
+        {
+
+            foreach (DictionaryEntry el in hashtable)
+            {
+                if (el.Value.Equals(element))
+                    return (int)el.Key;
+            }
+
+            return -1;
+        }
+
+        //сортировка обменом
+        public static void bubleSort(int[] mass, Stopwatch stopwatch)
+        {
+
             stopwatch.Restart();
             int temp;
             for (int i = 0; i < mass.Length; i++)
@@ -51,15 +127,15 @@ namespace Performance_check
                 }
             }
             stopwatch.Stop();
-            timing.StopTime();
+
             Console.WriteLine("Stopwatch: " + stopwatch.ElapsedTicks.ToString());
-            Console.WriteLine("Timing: " + timing.Result().ToString());
+
         }
 
         //сортировка выбором
-        public static void sortingByChoice(int[] mass, Stopwatch stopwatch,Timing timing)
+        public static void sortingByChoice(int[] mass, Stopwatch stopwatch)
         {
-            timing.StartTime();
+
             stopwatch.Restart();
             for (int i = 0; i < mass.Length - 1; i++)
             {
@@ -78,16 +154,16 @@ namespace Performance_check
                 mass[i] = temp;
             }
             stopwatch.Stop();
-            timing.StopTime();
+
             Console.WriteLine("Stopwatch: " + stopwatch.ElapsedTicks.ToString());
-            Console.WriteLine("Timing: " +timing.Result().ToString());
+
 
         }
 
         //Сортировка вставками
-        public static void sortingByInsert(int[] mass, Stopwatch stopwatch,Timing timing)
+        public static void sortingByInsert(int[] mass, Stopwatch stopwatch)
         {
-            timing.StartTime();
+
             stopwatch.Restart();
             for (int i = 1; i < mass.Length; i++)
             {
@@ -102,15 +178,16 @@ namespace Performance_check
                 }
             }
             stopwatch.Stop();
-            timing.StopTime();
+
             Console.WriteLine("Stopwatch: " + stopwatch.ElapsedTicks.ToString());
-            Console.WriteLine("Timing: " + timing.Result().ToString());
+
 
         }
 
-        static int linePoisk(int[] mass,int find, Stopwatch stopwatch, Timing timing)
+        //Линейный поиск
+        static int linePoisk(int[] mass, int find, Stopwatch stopwatch)
         {
-            timing.StartTime();
+
             stopwatch.Restart();
             int k = -1;
             for (int i = 0; i < mass.Length; i++)
@@ -118,15 +195,15 @@ namespace Performance_check
                 if (mass[i] == find) { k = i; break; };
             }
             stopwatch.Stop();
-            timing.StopTime();
+
             Console.WriteLine("Stopwatch: " + stopwatch.ElapsedTicks.ToString());
-            Console.WriteLine("Timing: " + timing.Result().ToString());
+
             return k;
         }
         // Бинарный поиск
-        static int binPoisk(int[] mass, int find, Stopwatch stopwatch, Timing timing)
+        static int binPoisk(int[] mass, int find, Stopwatch stopwatch)
         {
-            timing.StartTime();
+
             stopwatch.Restart();
             int k;   // с
             int L = 0;        // левая граница
@@ -158,9 +235,9 @@ namespace Performance_check
                 };
             }
             stopwatch.Stop();
-            timing.StopTime();
+
             Console.WriteLine("Stopwatch: " + stopwatch.ElapsedTicks.ToString());
-            Console.WriteLine("Timing: " + timing.Result().ToString());
+
             return k;
         }
     }
